@@ -150,3 +150,16 @@ section[id] {
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes progress-fill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-progress-bar {
+  animation: progress-fill 4.5s linear forwards;
+}

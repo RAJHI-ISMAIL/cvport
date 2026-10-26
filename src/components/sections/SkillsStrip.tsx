@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { siteContent } from "@/data/content";
 import { Chip } from "@/components/ui/Chip";
+import { TechIcon } from "@/components/ui/TechIcon";
 import { ChevronDown, ChevronUp, Sparkles, Layers } from "lucide-react";
 
 export const SkillsStrip: React.FC = () => {
@@ -24,8 +25,13 @@ export const SkillsStrip: React.FC = () => {
           {featuredSkills.map((skill) => (
             <div
               key={skill}
-              className="flex items-center justify-center p-3 sm:p-4 text-center hover:bg-lime transition-colors group cursor-default select-none border-b-2 sm:border-b-0 border-ink"
+              className="flex items-center justify-center gap-2 p-3 sm:p-4 text-center hover:bg-lime transition-colors group cursor-default select-none border-b-2 sm:border-b-0 border-ink"
             >
+              <TechIcon
+                name={skill}
+                size={16}
+                className="shrink-0 transition-transform group-hover:scale-125"
+              />
               <span className="font-mono text-xs sm:text-[13px] font-bold text-ink tracking-tight group-hover:scale-105 transition-transform">
                 {skill}
               </span>

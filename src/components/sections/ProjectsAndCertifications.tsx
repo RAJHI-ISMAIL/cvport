@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   X,
   Code2,
+  Play,
+  Pause,
 } from "lucide-react";
 
 export const ProjectsAndCertifications: React.FC = () => {
@@ -21,6 +23,8 @@ export const ProjectsAndCertifications: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
   const [showAllProjectsModal, setShowAllProjectsModal] = useState(false);
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const currentProject = projects[currentIndex];
@@ -32,6 +36,17 @@ export const ProjectsAndCertifications: React.FC = () => {
   const handleNext = useCallback(() => {
     setCurrentIndex((prev) => (prev === projects.length - 1 ? 0 : prev + 1));
   }, [projects.length]);
+
+  // Automatic slide progression (4.5s interval), pausing on hover or when modals are open
+  useEffect(() => {
+    if (!isAutoPlay || isHovered || activeModalProject || showAllProjectsModal) return;
+
+    const interval = setInterval(() => {
+      handleNext();
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlay, isHovered, activeModalProject, showAllProjectsModal, handleNext]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -100,13 +115,46 @@ export const ProjectsAndCertifications: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => setShowAllProjectsModal(true)}
                 className="px-3.5 py-2 bg-paper text-ink font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs hover:bg-yellow transition-all select-none"
               >
                 VIEW ALL PROJECTS →
+              </button>
+
+              {/* Autoplay Play/Pause Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsAutoPlay((prev) => !prev)}
+                className={`px-2.5 py-2 font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs transition-all flex items-center gap-1.5 cursor-pointer select-none ${
+                  isAutoPlay && !isHovered
+                    ? "bg-lime text-ink"
+                    : isAutoPlay && isHovered
+                    ? "bg-yellow text-ink"
+                    : "bg-paper text-ink/70 hover:bg-yellow"
+                }`}
+                title={
+                  isAutoPlay
+                    ? isHovered
+                      ? "Autoplay paused on hover"
+                      : "Click to pause autoplay"
+                    : "Click to enable autoplay"
+                }
+                aria-label={isAutoPlay ? "Pause automatic slide rotation" : "Start automatic slide rotation"}
+              >
+                {isAutoPlay ? (
+                  <>
+                    <Pause className="w-3.5 h-3.5 text-ink shrink-0" />
+                    <span>{isHovered ? "PAUSED" : "AUTO: ON"}</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-3.5 h-3.5 text-ink shrink-0" />
+                    <span>AUTO: OFF</span>
+                  </>
+                )}
               </button>
 
               {/* Prev / Next Pink Arrow Buttons per design.jpg */}
@@ -132,7 +180,20 @@ export const ProjectsAndCertifications: React.FC = () => {
           </div>
 
           {/* Carousel Slide Card (Pink outer frame per design.jpg) */}
-          <div className="w-full bg-pink border-brut-3 border-ink shadow-brut p-4 sm:p-5 relative transition-all">
+          <div
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="w-full bg-pink border-brut-3 border-ink shadow-brut p-4 sm:p-5 relative transition-all"
+          >
+            {/* Autoplay Progress Line */}
+            <div className="w-full h-1.5 bg-ink/20 border border-ink overflow-hidden mb-3">
+              <div
+                key={`${currentIndex}-${isAutoPlay}-${isHovered}`}
+                className={`h-full bg-violet ${
+                  isAutoPlay && !isHovered ? "animate-progress-bar" : "w-0"
+                }`}
+              />
+            </div>
             {/* Project Image / Visual Display Area (16:7 aspect ratio) */}
             <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-cream relative overflow-hidden flex flex-col items-center justify-center p-6 text-center select-none">
               {/* Graphic Neo-Brutalist Visual Mockup */}
