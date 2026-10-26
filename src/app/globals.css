@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #F4F2EC;
+  --paper: #FFFFFF;
+  --ink: #0A0A0A;
+  --lime: #C6F24E;
+  --pink: #FF7C9C;
+  --violet: #7B4DFF;
+  --violet-dark: #6A3CF0;
+  --yellow: #FFD21F;
+  --sky: #6EC6E8;
+  --coral: #FF5A5F;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-lime: var(--lime);
+  --color-pink: var(--pink);
+  --color-violet: var(--violet);
+  --color-violet-dark: var(--violet-dark);
+  --color-yellow: var(--yellow);
+  --color-sky: var(--sky);
+  --color-coral: var(--coral);
+
+  --font-heading: var(--font-heading), "Archivo Black", "Archivo", sans-serif;
+  --font-mono: var(--font-mono), "Space Mono", "JetBrains Mono", monospace;
+
+  --shadow-brut: 6px 6px 0px #0A0A0A;
+  --shadow-brut-sm: 4px 4px 0px #0A0A0A;
+  --shadow-brut-xs: 3px 3px 0px #0A0A0A;
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--cream);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-mono), monospace;
+  background-color: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Focus states per design.md */
+:focus-visible {
+  outline: 3px solid var(--violet);
+  outline-offset: 2px;
+}
+
+/* Background textures */
+.bg-grid-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(10, 10, 10, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.08) 1px, transparent 1px);
+}
+
+.bg-grid-pattern-violet {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(10, 10, 10, 0.12) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+}
+
+/* Neo-Brutalist utility classes */
+.border-brut-3 {
+  border: 3px solid var(--ink);
+}
+
+.border-brut-2 {
+  border: 2px solid var(--ink);
+}
+
+.shadow-brut {
+  box-shadow: 6px 6px 0px var(--ink);
+}
+
+.shadow-brut-sm {
+  box-shadow: 4px 4px 0px var(--ink);
+}
+
+.shadow-brut-xs {
+  box-shadow: 3px 3px 0px var(--ink);
+}
+
+/* Interactive Brutalist press */
+.brut-press {
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.brut-press:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--ink);
+}
+
+.brut-press:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--ink);
+}
+
+.brut-press-sm {
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.brut-press-sm:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px var(--ink);
+}
+
+.brut-press-sm:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px var(--ink);
+}
+
+/* Card hover lift */
+.brut-lift {
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.brut-lift:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--ink);
+}
+
+/* Section scroll anchor offset */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
