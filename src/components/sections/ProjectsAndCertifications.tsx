@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { siteContent, Project } from "@/data/content";
+import { siteContent, Project, Certification } from "@/data/content";
 import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
 import { SparkleDoodle } from "@/components/ui/Doodles";
+import { TechIcon } from "@/components/ui/TechIcon";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,6 +17,8 @@ import {
   Code2,
   Play,
   Pause,
+  Eye,
+  Download,
 } from "lucide-react";
 
 export const ProjectsAndCertifications: React.FC = () => {
@@ -23,6 +26,7 @@ export const ProjectsAndCertifications: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
   const [showAllProjectsModal, setShowAllProjectsModal] = useState(false);
+  const [activeModalCert, setActiveModalCert] = useState<Certification | null>(null);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -39,14 +43,28 @@ export const ProjectsAndCertifications: React.FC = () => {
 
   // Automatic slide progression (4.5s interval), pausing on hover or when modals are open
   useEffect(() => {
-    if (!isAutoPlay || isHovered || activeModalProject || showAllProjectsModal) return;
+    if (
+      !isAutoPlay ||
+      isHovered ||
+      activeModalProject ||
+      showAllProjectsModal ||
+      activeModalCert
+    )
+      return;
 
     const interval = setInterval(() => {
       handleNext();
     }, 4500);
 
     return () => clearInterval(interval);
-  }, [isAutoPlay, isHovered, activeModalProject, showAllProjectsModal, handleNext]);
+  }, [
+    isAutoPlay,
+    isHovered,
+    activeModalProject,
+    showAllProjectsModal,
+    activeModalCert,
+    handleNext,
+  ]);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -79,6 +97,7 @@ export const ProjectsAndCertifications: React.FC = () => {
       if (e.key === "Escape") {
         setActiveModalProject(null);
         setShowAllProjectsModal(false);
+        setActiveModalCert(null);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -128,13 +147,12 @@ export const ProjectsAndCertifications: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsAutoPlay((prev) => !prev)}
-                className={`px-2.5 py-2 font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs transition-all flex items-center gap-1.5 cursor-pointer select-none ${
-                  isAutoPlay && !isHovered
+                className={`px-2.5 py-2 font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs transition-all flex items-center gap-1.5 cursor-pointer select-none ${isAutoPlay && !isHovered
                     ? "bg-lime text-ink"
                     : isAutoPlay && isHovered
-                    ? "bg-yellow text-ink"
-                    : "bg-paper text-ink/70 hover:bg-yellow"
-                }`}
+                      ? "bg-yellow text-ink"
+                      : "bg-paper text-ink/70 hover:bg-yellow"
+                  }`}
                 title={
                   isAutoPlay
                     ? isHovered
@@ -189,9 +207,8 @@ export const ProjectsAndCertifications: React.FC = () => {
             <div className="w-full h-1.5 bg-ink/20 border border-ink overflow-hidden mb-3">
               <div
                 key={`${currentIndex}-${isAutoPlay}-${isHovered}`}
-                className={`h-full bg-violet ${
-                  isAutoPlay && !isHovered ? "animate-progress-bar" : "w-0"
-                }`}
+                className={`h-full bg-violet ${isAutoPlay && !isHovered ? "animate-progress-bar" : "w-0"
+                  }`}
               />
             </div>
             {/* Project Image / Visual Display Area (16:7 aspect ratio) */}
@@ -271,11 +288,10 @@ export const ProjectsAndCertifications: React.FC = () => {
                 type="button"
                 onClick={() => setCurrentIndex(idx)}
                 aria-label={`Go to slide ${idx + 1}: ${p.title}`}
-                className={`w-3 h-3 rounded-full border-brut-2 border-ink transition-all ${
-                  currentIndex === idx
+                className={`w-3 h-3 rounded-full border-brut-2 border-ink transition-all ${currentIndex === idx
                     ? "bg-ink scale-125"
                     : "bg-paper hover:bg-yellow"
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -299,20 +315,84 @@ export const ProjectsAndCertifications: React.FC = () => {
               {certifications.map((cert) => (
                 <div
                   key={cert.id}
-                  className="bg-paper border-brut-2 border-ink shadow-brut-xs p-4 flex flex-col justify-between hover:translate-x-[1px] hover:translate-y-[1px] transition-transform"
+                  className="bg-paper border-brut-2 border-ink shadow-brut-xs p-4 sm:p-5 flex flex-col justify-between hover:translate-x-[1px] hover:translate-y-[1px] transition-all group"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-yellow border border-ink">
-                      {cert.tag}
-                    </span>
-                    <CheckCircle2 className="w-4 h-4 text-ink shrink-0" />
+                  <div>
+                    {/* Top Tag & Verified status */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-yellow border border-ink flex items-center gap-1 text-ink">
+                          <TechIcon
+                            name={
+                              cert.tag === "CLOUD"
+                                ? "aws"
+                                : cert.tag === "SYSTEMS"
+                                ? "linux"
+                                : "duolingo"
+                            }
+                            size={12}
+                            className="shrink-0"
+                          />
+                          <span>{cert.tag}</span>
+                        </span>
+                        <span className="font-mono text-[10px] font-bold text-ink/60 uppercase">
+                          {cert.shortName}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-emerald-700 font-mono text-[10px] font-bold">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span className="hidden sm:inline">VERIFIED</span>
+                      </div>
+                    </div>
+
+                    {/* Title & Issuer */}
+                    <h4 className="font-heading text-sm sm:text-base text-ink uppercase tracking-tight mt-2.5 group-hover:text-violet transition-colors">
+                      {cert.title}
+                    </h4>
+                    <p className="font-mono text-xs text-ink/80 mt-0.5 font-bold">
+                      {cert.issuer}
+                    </p>
+
+                    <p className="font-mono text-[11px] sm:text-xs text-ink/80 mt-2 leading-relaxed">
+                      {cert.description}
+                    </p>
+
+                    {/* Skills pills */}
+                    <div className="flex flex-wrap gap-1 mt-3">
+                      {cert.skills.slice(0, 3).map((sk) => (
+                        <span
+                          key={sk}
+                          className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-cream border border-ink/30 text-ink"
+                        >
+                          {sk}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <h4 className="font-heading text-sm sm:text-base text-ink uppercase tracking-tight mt-2.5">
-                    {cert.title}
-                  </h4>
-                  <p className="font-mono text-xs text-ink/75 mt-1 font-bold">
-                    {cert.issuer}
-                  </p>
+
+                  {/* Action Buttons: View in website and direct PDF */}
+                  <div className="mt-4 pt-3 border-t-2 border-ink/15 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalCert(cert)}
+                      className="flex-1 py-1.5 px-3 bg-violet text-white hover:bg-yellow hover:text-ink font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-ink shadow-brut-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5 select-none"
+                      title={`Show ${cert.title} inside the website`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>VIEW IN WEBSITE</span>
+                    </button>
+
+                    <a
+                      href={cert.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-1.5 px-2.5 bg-paper hover:bg-lime text-ink font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-ink shadow-brut-xs transition-all flex items-center gap-1 shrink-0"
+                      title="Open PDF in new tab"
+                    >
+                      <span>PDF</span>
+                      <ArrowUpRight className="w-3 h-3" />
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
@@ -485,6 +565,150 @@ export const ProjectsAndCertifications: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* In-Website Certificate Viewer Modal */}
+      {activeModalCert && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Certificate Viewer: ${activeModalCert.title}`}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-ink/75 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setActiveModalCert(null)}
+        >
+          <div
+            className="w-full max-w-5xl bg-paper border-brut-3 border-ink shadow-brut p-4 sm:p-6 relative max-h-[95vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b-3 border-ink">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-none bg-yellow border-2 border-ink flex items-center justify-center shrink-0">
+                  <Award className="w-5 h-5 text-ink" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-lime border border-ink font-mono text-[10px] font-bold text-ink uppercase tracking-wider">
+                      {activeModalCert.tag}
+                    </span>
+                    <span className="font-mono text-xs text-ink/70 font-bold uppercase">
+                      {activeModalCert.issuer}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl uppercase tracking-wider text-ink mt-0.5">
+                    {activeModalCert.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Action Toolbar */}
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={activeModalCert.fileUrl}
+                  download
+                  className="px-2.5 py-1.5 bg-cream hover:bg-yellow text-ink border-2 border-ink font-mono text-xs font-bold uppercase tracking-wider shadow-brut-xs transition-colors flex items-center gap-1.5"
+                  title="Download Certificate PDF"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">DOWNLOAD</span>
+                </a>
+
+                <a
+                  href={activeModalCert.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1.5 bg-cream hover:bg-lime text-ink border-2 border-ink font-mono text-xs font-bold uppercase tracking-wider shadow-brut-xs transition-colors flex items-center gap-1.5"
+                  title="Open PDF in new tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">OPEN TAB</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveModalCert(null)}
+                  aria-label="Close certificate viewer"
+                  className="w-9 h-9 flex items-center justify-center border-2 border-ink bg-yellow hover:bg-pink text-ink transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Switcher Tabs between the 3 certificates */}
+            <div className="flex flex-wrap items-center gap-2 pt-3 pb-3 border-b-2 border-ink/20 bg-cream -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <span className="font-mono text-[10px] sm:text-xs font-bold text-ink/70 uppercase mr-1">
+                SWITCH CERTIFICATE:
+              </span>
+              {certifications.map((cert) => {
+                const isActive = activeModalCert.id === cert.id;
+                return (
+                  <button
+                    key={cert.id}
+                    type="button"
+                    onClick={() => setActiveModalCert(cert)}
+                    className={`px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider border-2 border-ink transition-all flex items-center gap-1.5 cursor-pointer ${
+                      isActive
+                        ? "bg-violet text-white shadow-brut-xs translate-y-[-1px]"
+                        : "bg-paper text-ink hover:bg-yellow shadow-none"
+                    }`}
+                  >
+                    <TechIcon
+                      name={
+                        cert.tag === "CLOUD"
+                          ? "aws"
+                          : cert.tag === "SYSTEMS"
+                          ? "linux"
+                          : "duolingo"
+                      }
+                      size={14}
+                      className="shrink-0"
+                    />
+                    <span>{cert.shortName}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* In-Website Document Viewer Frame */}
+            <div className="flex-1 py-3 flex flex-col min-h-0">
+              <div className="relative w-full h-[55vh] sm:h-[62vh] md:h-[68vh] border-2 border-ink bg-white overflow-hidden shadow-inner">
+                <iframe
+                  src={`${activeModalCert.fileUrl}#toolbar=1&navpanes=0`}
+                  title={activeModalCert.title}
+                  className="w-full h-full border-0"
+                />
+              </div>
+
+              {/* Competencies & Skills verification footer */}
+              <div className="mt-3 pt-3 border-t-2 border-ink/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-mono text-[11px] font-bold text-ink/70 uppercase">
+                    Competencies:
+                  </span>
+                  {activeModalCert.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-2 py-0.5 text-[10px] font-mono font-bold bg-yellow border border-ink text-ink"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => setActiveModalCert(null)}
+                  >
+                    CLOSE VIEWER
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -260,17 +260,16 @@ export const Hero: React.FC = () => {
                     avatarMode === "standing"
                       ? "/avatar-front.png"
                       : avatarMode === "smiling"
-                      ? "/expr-smiling.png"
-                      : avatarMode === "slight-smile"
-                      ? "/expr-slight-smile.png"
-                      : "/expr-thoughtful.png"
+                        ? "/expr-smiling.png"
+                        : avatarMode === "slight-smile"
+                          ? "/expr-slight-smile.png"
+                          : "/expr-thoughtful.png"
                   }
                   alt={`Rajhi Ismail 2D Character - ${avatarMode}`}
-                  className={`max-w-full object-contain transition-all duration-300 select-none group-hover:scale-105 ${
-                    avatarMode === "standing"
+                  className={`max-w-full object-contain transition-all duration-300 select-none group-hover:scale-105 ${avatarMode === "standing"
                       ? "h-[94%] drop-shadow-md"
                       : "h-[88%] drop-shadow-md"
-                  }`}
+                    }`}
                 />
 
                 {/* Subtle Click hint on hover */}
@@ -287,11 +286,10 @@ export const Hero: React.FC = () => {
                     setAvatarMode("standing");
                     setIsSpeaking(false);
                   }}
-                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
-                    avatarMode === "standing"
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${avatarMode === "standing"
                       ? "bg-yellow shadow-brut-xs -translate-y-0.5"
                       : "bg-cream hover:bg-yellow/40"
-                  }`}
+                    }`}
                 >
                   🧍 Stand
                 </button>
@@ -300,11 +298,10 @@ export const Hero: React.FC = () => {
                   onClick={() => {
                     triggerGreeting();
                   }}
-                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
-                    avatarMode === "smiling"
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${avatarMode === "smiling"
                       ? "bg-yellow shadow-brut-xs -translate-y-0.5"
                       : "bg-cream hover:bg-yellow/40"
-                  }`}
+                    }`}
                 >
                   😄 Smile
                 </button>
@@ -314,11 +311,10 @@ export const Hero: React.FC = () => {
                     setAvatarMode("slight-smile");
                     setIsSpeaking(false);
                   }}
-                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
-                    avatarMode === "slight-smile"
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${avatarMode === "slight-smile"
                       ? "bg-yellow shadow-brut-xs -translate-y-0.5"
                       : "bg-cream hover:bg-yellow/40"
-                  }`}
+                    }`}
                 >
                   🙂 Chill
                 </button>
@@ -328,11 +324,10 @@ export const Hero: React.FC = () => {
                     setAvatarMode("thoughtful");
                     setIsSpeaking(false);
                   }}
-                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
-                    avatarMode === "thoughtful"
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${avatarMode === "thoughtful"
                       ? "bg-yellow shadow-brut-xs -translate-y-0.5"
                       : "bg-cream hover:bg-yellow/40"
-                  }`}
+                    }`}
                 >
                   🤔 Think
                 </button>

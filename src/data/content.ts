@@ -40,6 +40,10 @@ export interface Certification {
   issuer: string;
   tag: string;
   date?: string;
+  fileUrl: string;
+  shortName: string;
+  description: string;
+  skills: string[];
 }
 
 export interface ExperienceItem {
@@ -328,20 +332,35 @@ export const siteContent: SiteContent = {
     {
       id: "aws-ec2",
       title: "EC2 Cloud Computing",
+      shortName: "Amazon AWS",
       issuer: "Amazon Web Services (AWS)",
       tag: "CLOUD",
+      fileUrl: "/amazon.pdf",
+      description:
+        "Amazon Web Services certificate in EC2 cloud computing, compute instances, cloud security, and scalable cloud architecture.",
+      skills: ["AWS EC2", "Cloud Computing", "Virtual Machines", "Cloud Security"],
     },
     {
       id: "cisco-linux",
       title: "NDG Linux Unhatched",
+      shortName: "Cisco Linux",
       issuer: "Cisco Networking Academy",
       tag: "SYSTEMS",
+      fileUrl: "/linux.pdf",
+      description:
+        "NDG Linux certificate by Cisco Networking Academy covering Linux CLI, system administration, file systems, permissions, and bash scripting.",
+      skills: ["Linux CLI", "Bash Scripting", "System Administration", "File Permissions"],
     },
     {
       id: "duolingo-b2",
       title: "English Test: B2 (Upper Intermediate)",
+      shortName: "Duolingo B2",
       issuer: "Duolingo",
       tag: "LANGUAGE",
+      fileUrl: "/certif.pdf",
+      description:
+        "Official Duolingo English assessment certifying Upper Intermediate (B2) CEFR level in English reading, comprehension, conversation, and academic writing.",
+      skills: ["English B2", "Professional Communication", "Technical Writing", "Listening & Speaking"],
     },
   ],
   experience: [

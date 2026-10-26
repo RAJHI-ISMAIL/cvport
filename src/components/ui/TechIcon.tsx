@@ -441,6 +441,32 @@ export const TechIcon: React.FC<TechIconProps> = ({
     );
   }
 
+  // 19. DUOLINGO / LANGUAGE / ENGLISH
+  if (
+    normalized.includes("duolingo") ||
+    normalized.includes("language") ||
+    normalized.includes("english")
+  ) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+        className={className}
+        {...props}
+      >
+        <circle cx="12" cy="12" r="10" fill={colored ? "#58CC02" : "currentColor"} />
+        <circle cx="8.5" cy="10" r="3.2" fill="#FFFFFF" />
+        <circle cx="15.5" cy="10" r="3.2" fill="#FFFFFF" />
+        <circle cx="9" cy="10" r="1.5" fill="#4B4B4B" />
+        <circle cx="15" cy="10" r="1.5" fill="#4B4B4B" />
+        <path d="M12 13l-1.5 2.5h3L12 13z" fill="#FF9600" />
+      </svg>
+    );
+  }
+
   // Fallback icon for any code/tech
   return (
     <Code2
