@@ -5,7 +5,7 @@ import { siteContent } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { SparkleDoodle, PlusCross, AsteriskStar } from "@/components/ui/Doodles";
-import { ArrowDown, ArrowUpRight, Mail, Globe, MapPin } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Mail, Globe, MapPin, Palette, X } from "lucide-react";
 
 // Inline brand SVGs for GitHub and LinkedIn for maximum reliability and styling
 const GithubIcon = () => (
@@ -44,6 +44,18 @@ const fullLines = [
 export const Hero: React.FC = () => {
   const { personal } = siteContent;
   const [lineCount, setLineCount] = useState(0);
+  const [avatarMode, setAvatarMode] = useState<
+    "standing" | "smiling" | "slight-smile" | "thoughtful"
+  >("standing");
+  const [showSheetModal, setShowSheetModal] = useState(false);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowSheetModal(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
 
   useEffect(() => {
     const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -164,28 +176,98 @@ export const Hero: React.FC = () => {
           <AsteriskStar className="absolute top-4 left-4 w-7 h-7 text-ink/70" />
 
           {/* Main Photo Frame (Lime outline with Brutalist Shadow) */}
-          <div className="relative w-full max-w-[340px] sm:max-w-[380px] aspect-[4/5] bg-lime border-brut-3 border-ink shadow-brut p-3 flex flex-col justify-between">
+          <div className="relative w-full max-w-[340px] sm:max-w-[380px] bg-lime border-brut-3 border-ink shadow-brut p-3 flex flex-col justify-between">
+            {/* Top Frame Bar: Avatar Tag + Sheet Button */}
+            <div className="flex items-center justify-between pb-2 px-0.5">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-yellow border-2 border-ink shadow-brut-xs">
+                2D AVATAR • ISMAIL
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowSheetModal(true)}
+                className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-paper hover:bg-violet hover:text-white border-2 border-ink shadow-brut-xs transition-colors cursor-pointer select-none"
+                title="View full 2D Character Model Sheet"
+              >
+                <Palette className="w-3 h-3" />
+                <span>SHEET 🎨</span>
+              </button>
+            </div>
+
             {/* Inner Photo Area */}
-            <div className="relative w-full h-full border-brut-2 border-ink overflow-hidden bg-cream flex items-center justify-center">
-              {/* Illustrated Avatar / Photo Placeholder */}
-              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-paper to-cream text-center p-6">
-                <div className="w-28 h-28 rounded-full bg-yellow border-brut-3 border-ink shadow-brut-sm flex items-center justify-center text-4xl mb-4 select-none">
-                  👨‍💻
-                </div>
-                <div className="font-heading text-lg text-ink uppercase tracking-wider">
-                  {personal.name}
-                </div>
-                <div className="font-mono text-xs text-ink/70 mt-1">
-                  M.S. in Computer Science
-                </div>
-                <div className="font-mono text-[11px] font-bold text-violet mt-0.5">
-                  Henan University of Technology
-                </div>
+            <div className="relative w-full aspect-[4/5] border-brut-2 border-ink overflow-hidden bg-cream flex flex-col justify-between">
+              {/* Avatar Display */}
+              <div className="relative w-full flex-1 flex items-center justify-center p-2 bg-gradient-to-b from-paper via-cream to-yellow/10 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={
+                    avatarMode === "standing"
+                      ? "/avatar-front.png"
+                      : avatarMode === "smiling"
+                      ? "/expr-smiling.png"
+                      : avatarMode === "slight-smile"
+                      ? "/expr-slight-smile.png"
+                      : "/expr-thoughtful.png"
+                  }
+                  alt={`Rajhi Ismail 2D Character - ${avatarMode}`}
+                  className={`max-w-full object-contain transition-all duration-200 select-none ${
+                    avatarMode === "standing"
+                      ? "h-[92%] drop-shadow-md hover:scale-105"
+                      : "h-[85%] rounded-full border-2 border-ink shadow-brut-xs"
+                  }`}
+                />
+              </div>
+
+              {/* Expression Selector Bar */}
+              <div className="flex items-center justify-center gap-1.5 p-1.5 bg-paper border-t-2 border-ink select-none z-10">
+                <button
+                  type="button"
+                  onClick={() => setAvatarMode("standing")}
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
+                    avatarMode === "standing"
+                      ? "bg-yellow shadow-brut-xs -translate-y-0.5"
+                      : "bg-cream hover:bg-yellow/40"
+                  }`}
+                >
+                  🧍 Stand
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAvatarMode("smiling")}
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
+                    avatarMode === "smiling"
+                      ? "bg-yellow shadow-brut-xs -translate-y-0.5"
+                      : "bg-cream hover:bg-yellow/40"
+                  }`}
+                >
+                  😄 Smile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAvatarMode("slight-smile")}
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
+                    avatarMode === "slight-smile"
+                      ? "bg-yellow shadow-brut-xs -translate-y-0.5"
+                      : "bg-cream hover:bg-yellow/40"
+                  }`}
+                >
+                  🙂 Chill
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAvatarMode("thoughtful")}
+                  className={`px-2 py-0.5 font-mono text-[10px] font-bold border border-ink transition-all cursor-pointer ${
+                    avatarMode === "thoughtful"
+                      ? "bg-yellow shadow-brut-xs -translate-y-0.5"
+                      : "bg-cream hover:bg-yellow/40"
+                  }`}
+                >
+                  🤔 Think
+                </button>
               </div>
             </div>
 
             {/* Overlapping Violet Code Card (bottom-right) */}
-            <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:-right-6 w-[270px] sm:w-[320px] bg-violet text-white border-brut-3 border-white shadow-brut p-4 font-mono text-[11px] sm:text-[12px] leading-relaxed z-10 select-none">
+            <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:-right-6 w-[270px] sm:w-[320px] bg-violet text-white border-brut-3 border-white shadow-brut p-4 font-mono text-[11px] sm:text-[12px] leading-relaxed z-20 select-none">
               <div className="flex items-center gap-1.5 mb-2 pb-2 border-b border-white/20">
                 <span className="w-2.5 h-2.5 rounded-full bg-coral inline-block"></span>
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow inline-block"></span>
@@ -219,6 +301,67 @@ export const Hero: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 2D Character Sheet Modal */}
+      {showSheetModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="2D Character Model Sheet Modal"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/75 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setShowSheetModal(false)}
+        >
+          <div
+            className="w-full max-w-4xl bg-paper border-brut-3 border-ink shadow-brut p-6 relative max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b-3 border-ink mb-4">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 bg-lime border-2 border-ink font-mono text-xs font-bold text-ink">
+                  CHARACTER DESIGN
+                </span>
+                <h3 className="font-heading text-lg sm:text-xl uppercase tracking-wider text-ink">
+                  2D Model Sheet (Rajhi Ismail)
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSheetModal(false)}
+                aria-label="Close modal"
+                className="w-8 h-8 flex items-center justify-center border-2 border-ink bg-yellow hover:bg-lime transition-colors"
+              >
+                <X className="w-5 h-5 text-ink" />
+              </button>
+            </div>
+
+            {/* Model Sheet Image */}
+            <div className="bg-cream border-brut-2 border-ink p-2 sm:p-4 shadow-brut-xs overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/character-sheet.jpg"
+                alt="Rajhi Ismail 2D Character Model Sheet"
+                className="w-full h-auto border-2 border-ink object-contain bg-white"
+              />
+            </div>
+
+            {/* Footer Details */}
+            <div className="mt-4 pt-3 border-t-2 border-ink/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs text-ink/80">
+              <div>
+                <span className="font-bold text-ink">Features: </span>
+                4-angle full-body turnarounds, facial expressions & outfit breakdown.
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setShowSheetModal(false)}
+              >
+                CLOSE
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
