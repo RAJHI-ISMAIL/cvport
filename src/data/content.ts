@@ -80,6 +80,7 @@ export interface SiteContent {
     location: string;
     email: string;
     phone: string;
+    wechat: string;
     website: string;
     websiteUrl: string;
     socials: SocialLink[];
@@ -115,6 +116,7 @@ export const siteContent: SiteContent = {
     location: "ZHENGZHOU, CHINA",
     email: "ismailrajhi07@gmail.com",
     phone: "+216 26922955",
+    wechat: "+86 19515544505",
     website: "ismailraj.netlify.app",
     websiteUrl: "https://ismailraj.netlify.app",
     socials: [
