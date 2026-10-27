@@ -37,18 +37,23 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const completedRef = useRef(false);
   const totalAssets = CRITICAL_IMAGES.length + CRITICAL_VIDEOS.length;
 
-  // Lock body scroll while loading screen is visible
+  // Lock body scroll while loading screen is active, and immediately unlock when exiting or done
   useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    const originalTouchAction = document.body.style.touchAction;
-    document.body.style.overflow = "hidden";
-    document.body.style.touchAction = "none";
+    if (!isExiting && !isDone) {
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
 
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.touchAction = originalTouchAction;
-    };
-  }, []);
+      return () => {
+        document.body.style.overflow = originalOverflow || "";
+        document.body.style.touchAction = originalTouchAction || "";
+      };
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+  }, [isExiting, isDone]);
 
   // Completion sequence
   const finishLoading = useCallback(() => {
@@ -61,8 +66,12 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     // Smooth fade out into the website
     setTimeout(() => {
       setIsExiting(true);
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
       setTimeout(() => {
         setIsDone(true);
+        document.body.style.overflow = "";
+        document.body.style.touchAction = "";
         if (onComplete) onComplete();
       }, 600);
     }, 350);
