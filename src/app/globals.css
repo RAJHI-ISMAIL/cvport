@@ -165,3 +165,69 @@ section[id] {
 .animate-progress-bar {
   animation: progress-fill 4.5s linear forwards;
 }
+
+@keyframes striped-move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 0;
+  }
+}
+
+.bg-stripes-brut {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    rgba(10, 10, 10, 0.18) 12px,
+    rgba(10, 10, 10, 0.18) 24px
+  );
+  background-size: 34px 34px;
+  animation: striped-move 1.2s linear infinite;
+}
+
+@keyframes wave-drift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-80px);
+  }
+}
+
+@keyframes wave-drift-fast {
+  0% {
+    transform: translateX(-80px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes dot-hop {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-wave-drift {
+  animation: wave-drift 2.2s linear infinite;
+}
+
+.animate-wave-drift-fast {
+  animation: wave-drift-fast 1.6s linear infinite;
+}
+
+.animate-dot-1 {
+  animation: dot-hop 1.4s ease-in-out infinite;
+}
+.animate-dot-2 {
+  animation: dot-hop 1.4s ease-in-out infinite 0.2s;
+}
+.animate-dot-3 {
+  animation: dot-hop 1.4s ease-in-out infinite 0.4s;
+}

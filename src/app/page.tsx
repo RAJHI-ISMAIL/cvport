@@ -8,10 +8,12 @@ import { EducationSection } from "@/components/sections/EducationSection";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 export default function Home() {
   return (
     <LanguageProvider>
+      <LoadingScreen />
       <div className="w-full min-h-screen bg-cream bg-dot-pattern py-0 md:py-8 px-0 md:px-4 flex justify-center">
         {/* 
           Neo-Brutalist Bento Board:

@@ -16,27 +16,33 @@ const LanguageContext = createContext<LanguageContextValue>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [lang, setLangState] = useState<Language>("en");
+  const [lang, setLangState] = useState<Language>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("portfolio-lang") as Language | null;
+        if (saved && allTranslations[saved]) {
+          return saved;
+        }
+      } catch {}
+    }
+    return "en";
+  });
 
   const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
-    // Persist to localStorage
-    try { localStorage.setItem("portfolio-lang", newLang); } catch {}
-    // Set html lang + dir for RTL support
-    const t = allTranslations[newLang];
-    document.documentElement.lang = t.lang;
-    document.documentElement.dir = t.dir;
+    try {
+      localStorage.setItem("portfolio-lang", newLang);
+    } catch {}
   }, []);
 
-  // Restore persisted language on mount
+  // Sync html lang + dir whenever lang changes
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("portfolio-lang") as Language | null;
-      if (saved && allTranslations[saved]) {
-        setLang(saved);
-      }
-    } catch {}
-  }, [setLang]);
+    const translation = allTranslations[lang];
+    if (translation) {
+      document.documentElement.lang = translation.lang;
+      document.documentElement.dir = translation.dir;
+    }
+  }, [lang]);
 
   const t = allTranslations[lang];
 
