@@ -1,6 +1,6 @@
-# Rajhi Ismail - Neo-Brutalist Portfolio
+# Ismail Rajhi - Neo-Brutalist Portfolio
 
-A personal portfolio website for **Rajhi Ismail** (Master's student in Computer Science with a focus on AI & Deep Learning, Full-Stack and Mobile Developer). Built with Next.js App Router, TypeScript, Tailwind CSS, and Neo-Brutalist aesthetics (thick black borders, hard offset shadows, bento grid layout, and vibrant flat colors).
+A personal portfolio website for **Ismail Rajhi** (Tunisian Computer Science graduate and Master's student in Computer Science based in China). Built with Next.js App Router, TypeScript, Tailwind CSS, and Neo-Brutalist aesthetics (thick black borders, hard offset shadows, bento grid layout, and vibrant flat colors).
 
 ---
 
