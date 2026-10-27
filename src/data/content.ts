@@ -119,9 +119,9 @@ export const siteContent: SiteContent = {
   personal: {
     name: "Rajhi Ismail",
     shortName: "Ismail",
-    title: "AI & SOFTWARE ENGINEER",
-    titleLine1: "AI & SOFTWARE",
-    titleLine2: "ENGINEER",
+    title: "COMPUTER SCIENCE STUDENT",
+    titleLine1: "COMPUTER SCIENCE",
+    titleLine2: "STUDENT",
     tagline: "HEY, I'M ISMAIL 👋",
     intro:
       "Master's student in Computer Science at Henan University of Technology. I build intelligent, full-stack and mobile applications, with a growing focus on deep learning.",

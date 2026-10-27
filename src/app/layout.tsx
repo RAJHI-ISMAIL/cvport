@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Rajhi Ismail | AI & Software Engineer",
+  title: "Rajhi Ismail | Computer Science Student",
   description:
     "Master's student in Computer Science at Henan University of Technology. I build intelligent, full-stack and mobile applications, with a growing focus on deep learning.",
   keywords: [
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Rajhi Ismail - AI & Software Engineer Portfolio",
+        alt: "Rajhi Ismail - Computer Science Student Portfolio",
       },
     ],
   },
@@ -72,11 +72,11 @@ export const metadata: Metadata = {
   },
 };
 
-const personJsonLd = {
+  const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Rajhi Ismail",
-  jobTitle: "AI & Software Engineer",
+  jobTitle: "Computer Science Student",
   url: "https://ismailraj.netlify.app",
   email: "mailto:ismailrajhi07@gmail.com",
   telephone: "+216 26922955",

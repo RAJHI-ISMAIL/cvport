@@ -36,8 +36,9 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const animFrameRef = useRef<number | null>(null);
   const completedRef = useRef(false);
   const totalAssets = CRITICAL_IMAGES.length + CRITICAL_VIDEOS.length;
+  const criticalAssetsLoadedRef = useRef(new Set<string>());
 
-  // Lock body scroll while loading screen is active, and immediately unlock when exiting or done
+  // Lock body scroll while loading screen is active
   useEffect(() => {
     if (!isExiting && !isDone) {
       const originalOverflow = document.body.style.overflow;
@@ -63,7 +64,6 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
     targetProgressRef.current = 100;
     setProgress(100);
 
-    // Smooth fade out into the website
     setTimeout(() => {
       setIsExiting(true);
       document.body.style.overflow = "";
@@ -74,30 +74,30 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         document.body.style.touchAction = "";
         if (onComplete) onComplete();
       }, 600);
-    }, 350);
+    }, 200);
   }, [onComplete]);
 
   // Smooth progress interpolator
   useEffect(() => {
     const startTime = Date.now();
-    const minDisplayDuration = 1800; // 1.8s minimum display for aesthetic delight
+    const minDisplayDuration = 1200;
 
     const updateLoop = () => {
       const elapsed = Date.now() - startTime;
       const timeRatio = Math.min(1, elapsed / minDisplayDuration);
 
       const assetRatio = totalAssets > 0 ? loadedCount / totalAssets : 1;
-      const combinedTarget = Math.min(100, Math.floor(Math.max(timeRatio * 92, assetRatio * 96)));
+      const combinedTarget = Math.min(100, Math.floor(Math.max(timeRatio * 90, assetRatio * 98)));
 
       targetProgressRef.current = Math.max(targetProgressRef.current, combinedTarget);
 
       setProgress((prev) => {
         if (prev >= 100) return 100;
         const delta = targetProgressRef.current - prev;
-        const step = Math.max(1, Math.ceil(delta * 0.18));
+        const step = Math.max(1, Math.ceil(delta * 0.25));
         const next = Math.min(100, prev + step);
 
-        if (next >= 100 && elapsed >= minDisplayDuration) {
+        if (next >= 100 && elapsed >= minDisplayDuration && loadedCount >= Math.floor(totalAssets * 0.9)) {
           finishLoading();
           return 100;
         }
@@ -120,15 +120,16 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   useEffect(() => {
     let mounted = true;
 
-    // Safety timeout: Never get stuck on slow networks (max 3.8s)
+    // Safety timeout
     const safetyTimeout = setTimeout(() => {
       if (!completedRef.current && mounted) {
         finishLoading();
       }
-    }, 3800);
+    }, 6000);
 
-    const assetIncrement = () => {
-      if (mounted) {
+    const assetIncrement = (src?: string) => {
+      if (mounted && src && !criticalAssetsLoadedRef.current.has(src)) {
+        criticalAssetsLoadedRef.current.add(src);
         setLoadedCount((prev) => {
           const next = prev + 1;
           if (next >= totalAssets) {
@@ -136,37 +137,46 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
           }
           return next;
         });
+      } else if (mounted && !src) {
+        setLoadedCount((prev) => {
+          const next = prev + 1;
+          return next;
+        });
       }
     };
 
-    // Preload images
+    // Preload critical images
     CRITICAL_IMAGES.forEach((src) => {
       const img = new window.Image();
-      img.onload = assetIncrement;
-      img.onerror = assetIncrement;
+      img.onload = () => {
+        if (typeof img.decode === 'function') {
+          img.decode().then(() => assetIncrement(src)).catch(() => assetIncrement(src));
+        } else {
+          assetIncrement(src);
+        }
+      };
+      img.onerror = () => assetIncrement(src);
       img.src = src;
     });
 
-    // Buffer video metadata & initial chunk
+    // Buffer video metadata
     CRITICAL_VIDEOS.forEach((src) => {
       const video = document.createElement("video");
-      video.preload = "auto";
+      video.preload = "metadata";
       video.muted = true;
       video.playsInline = true;
 
       const onVideoReady = () => {
         cleanup();
-        assetIncrement();
+        assetIncrement(src);
       };
 
       const cleanup = () => {
-        video.removeEventListener("loadeddata", onVideoReady);
         video.removeEventListener("loadedmetadata", onVideoReady);
         video.removeEventListener("canplay", onVideoReady);
         video.removeEventListener("error", onVideoReady);
       };
 
-      video.addEventListener("loadeddata", onVideoReady, { once: true });
       video.addEventListener("loadedmetadata", onVideoReady, { once: true });
       video.addEventListener("canplay", onVideoReady, { once: true });
       video.addEventListener("error", onVideoReady, { once: true });
@@ -174,7 +184,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       video.src = src;
       video.load();
 
-      setTimeout(onVideoReady, 1600);
+      setTimeout(onVideoReady, 2000);
     });
 
     return () => {
