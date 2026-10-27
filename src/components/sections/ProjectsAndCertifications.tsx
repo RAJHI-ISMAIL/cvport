@@ -86,6 +86,36 @@ const ProjectVisual: React.FC<{ project: Project }> = ({ project }) => {
     );
   }
 
+// Logo-only visual (e.g. projects that ship a logo but no screenshot/video)
+  if (project.logoUrl) {
+    return (
+      <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink relative overflow-hidden group">
+        <Image
+          src={project.logoUrl}
+          alt={`${project.title} logo`}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          sizes="(max-width: 1024px) 100vw, 66vw"
+        />
+        {/* Gradient scrim for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
+        <SparkleDoodle
+          className="absolute top-3 right-4 w-6 h-6"
+          fillColor="#FFD21F"
+          strokeColor="#0A0A0A"
+        />
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 text-white">
+          <h4 className="font-heading text-lg sm:text-2xl uppercase tracking-wider drop-shadow-md line-clamp-1">
+            {project.title}
+          </h4>
+          <p className="font-mono text-xs sm:text-sm text-yellow font-bold mt-0.5">
+            {project.tagline}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Placeholder fallback for projects without assets
   return (
     <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-cream relative overflow-hidden flex flex-col items-center justify-center p-6 text-center select-none">
