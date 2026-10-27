@@ -32,6 +32,16 @@ export interface Project {
   repoUrl?: string;
   accentColor: "pink" | "lime" | "yellow" | "sky" | "violet" | "paper";
   imagePlaceholderInitial: string;
+  /** Logo/icon for the project (shown in carousel header) */
+  logoUrl?: string;
+  /** Primary hero / screenshot image */
+  heroImage?: string;
+  /** Demo or walkthrough video (mp4) */
+  videoUrl?: string;
+  /** Additional gallery screenshots */
+  gallery?: string[];
+  /** PDF presentation / slide deck */
+  presentationUrl?: string;
 }
 
 export interface Certification {
@@ -251,6 +261,20 @@ export const siteContent: SiteContent = {
       repoUrl: "TODO: https://github.com/your-username/tempora",
       accentColor: "sky",
       imagePlaceholderInitial: "3D",
+      logoUrl: "/projects/tempora/logo.jpg",
+      heroImage: "/projects/tempora/hero.png",
+      videoUrl: "/projects/tempora/earth-spin.mp4",
+      gallery: [
+        "/projects/tempora/home.png",
+        "/projects/tempora/dashboard-sunny.png",
+        "/projects/tempora/dashboard-rainy.png",
+        "/projects/tempora/dashboard-heatwave.png",
+        "/projects/tempora/screenshot-globe.png",
+        "/projects/tempora/screenshot-dashboard.png",
+        "/projects/tempora/screenshot-search.png",
+        "/projects/tempora/screenshot-night.png",
+        "/projects/tempora/screenshot-mobile.png",
+      ],
     },
     {
       id: "ecommerce-ai",
@@ -266,6 +290,9 @@ export const siteContent: SiteContent = {
       repoUrl: "TODO: https://github.com/your-username/ai-ecommerce",
       accentColor: "lime",
       imagePlaceholderInitial: "EC",
+      logoUrl: "/projects/ecommerce-ai/logo.png",
+      videoUrl: "/projects/ecommerce-ai/demo.mp4",
+      presentationUrl: "/projects/ecommerce-ai/presentation.pdf",
     },
     {
       id: "olympic-ml",

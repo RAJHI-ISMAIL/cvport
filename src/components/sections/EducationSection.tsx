@@ -1,10 +1,14 @@
+"use client";
+
 import React from "react";
 import { siteContent } from "@/data/content";
 import { GraduationCap, Languages as LanguagesIcon, Star } from "lucide-react";
 import { SparkleDoodle } from "@/components/ui/Doodles";
+import { useLang } from "@/context/LanguageContext";
 
 export const EducationSection: React.FC = () => {
   const { education, languages } = siteContent;
+  const { t } = useLang();
 
   return (
     <section
@@ -18,7 +22,7 @@ export const EducationSection: React.FC = () => {
           <div className="flex lg:flex-col items-start gap-2">
             <GraduationCap className="w-6 h-6 text-ink" />
             <span className="font-heading text-xl uppercase tracking-wider text-ink mt-0 lg:mt-2">
-              EDUCATION
+              {t.education.sectionLabel}
             </span>
           </div>
           <span className="font-mono text-2xl font-bold text-ink hidden lg:block">
@@ -83,7 +87,7 @@ export const EducationSection: React.FC = () => {
             <div className="flex items-center gap-2 pb-3 border-b-2 border-ink mb-6">
               <LanguagesIcon className="w-5 h-5 text-ink" />
               <h3 className="font-heading text-lg uppercase tracking-wider text-ink">
-                Languages
+                {t.languages.sectionLabel}
               </h3>
             </div>
 

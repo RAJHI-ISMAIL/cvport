@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { SparkleDoodle, PlusCross, AsteriskStar } from "@/components/ui/Doodles";
 import { ArrowDown, ArrowUpRight, Mail, Globe, MapPin } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 // Inline brand SVGs for GitHub and LinkedIn for maximum reliability and styling
 const GithubIcon = () => (
@@ -43,6 +44,7 @@ const fullLines = [
 
 export const Hero: React.FC = () => {
   const { personal } = siteContent;
+  const { t } = useLang();
   const [lineCount, setLineCount] = useState(0);
   const [avatarMode, setAvatarMode] = useState<
     "standing" | "smiling" | "slight-smile" | "thoughtful"
@@ -135,23 +137,23 @@ export const Hero: React.FC = () => {
             {/* Top Tag & Location */}
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-block px-3.5 py-1.5 bg-violet text-white font-mono text-[12px] font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs">
-                {personal.tagline}
+                {t.hero.tagline}
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow text-ink font-mono text-[11px] font-bold uppercase tracking-tight border-brut-2 border-ink shadow-brut-xs">
                 <MapPin className="w-3.5 h-3.5" />
-                {personal.location}
+                {t.hero.location}
               </span>
             </div>
 
             {/* Giant Title */}
             <h1 className="font-heading text-4xl sm:text-6xl lg:text-[76px] xl:text-[84px] leading-[0.95] tracking-tight uppercase text-ink select-none">
-              <span className="block">{personal.titleLine1}</span>
-              <span className="block text-ink">{personal.titleLine2}</span>
+              <span className="block">{t.hero.titleLine1}</span>
+              <span className="block text-ink">{t.hero.titleLine2}</span>
             </h1>
 
             {/* Intro text */}
             <p className="font-mono text-ink text-sm sm:text-base leading-relaxed max-w-xl">
-              {personal.intro}
+              {t.hero.intro}
             </p>
           </div>
 
@@ -159,7 +161,7 @@ export const Hero: React.FC = () => {
           <div className="mt-8 space-y-6">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Button href="#projects" variant="primary" size="md">
-                <span>VIEW MY WORK</span>
+                <span>{t.hero.viewWork}</span>
                 <ArrowUpRight className="w-4 h-4 ml-1" />
               </Button>
               <Button
@@ -168,7 +170,7 @@ export const Hero: React.FC = () => {
                 variant="secondary"
                 size="md"
               >
-                <span>DOWNLOAD RESUME</span>
+                <span>{t.hero.downloadResume}</span>
                 <ArrowDown className="w-4 h-4 ml-1" />
               </Button>
             </div>
@@ -176,7 +178,7 @@ export const Hero: React.FC = () => {
             {/* Connect with me social row */}
             <div className="pt-2">
               <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-ink/70 mb-2">
-                CONNECT WITH ME
+                {t.hero.connectWith}
               </p>
               <div className="flex items-center gap-3">
                 <IconButton

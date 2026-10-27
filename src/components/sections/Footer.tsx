@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { siteContent } from "@/data/content";
 import { IconButton } from "@/components/ui/IconButton";
 import { Mail, Globe, ArrowUp } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 const GithubIcon = () => (
   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -23,6 +24,7 @@ const LinkedinIcon = () => (
 
 export const Footer: React.FC = () => {
   const { personal } = siteContent;
+  const { t } = useLang();
   const [currentYear, setCurrentYear] = useState(2026);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export const Footer: React.FC = () => {
 
         {/* Center: Dynamic Copyright */}
         <div className="flex items-center justify-center p-4 text-center font-mono text-xs text-ink/80">
-          © {currentYear} {personal.name}. All rights reserved. Built with
+          © {currentYear} {personal.name}. {t.footer.copyright} Built with
           Next.js & Neo-Brutalist Design.
         </div>
 

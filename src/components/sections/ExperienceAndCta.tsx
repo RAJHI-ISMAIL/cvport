@@ -1,11 +1,15 @@
+"use client";
+
 import React from "react";
 import { siteContent } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import { SpikyBurst } from "@/components/ui/Doodles";
 import { ArrowDown, ArrowUpRight, Briefcase } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 export const ExperienceAndCta: React.FC = () => {
   const { experience, personal } = siteContent;
+  const { t } = useLang();
 
   return (
     <section
@@ -19,7 +23,7 @@ export const ExperienceAndCta: React.FC = () => {
           <div className="flex lg:flex-col items-start gap-2">
             <Briefcase className="w-6 h-6 text-ink" />
             <span className="font-heading text-xl uppercase tracking-wider text-ink mt-0 lg:mt-2">
-              EXPERIENCE
+              {t.experience.sectionLabel}
             </span>
           </div>
           <span className="font-mono text-2xl font-bold text-ink hidden lg:block">
@@ -82,7 +86,7 @@ export const ExperienceAndCta: React.FC = () => {
               variant="secondary"
               size="md"
             >
-              <span>VIEW FULL RESUME</span>
+              <span>{t.experience.viewResume}</span>
               <ArrowDown className="w-4 h-4 ml-1" />
             </Button>
           </div>
@@ -103,7 +107,7 @@ export const ExperienceAndCta: React.FC = () => {
               READY TO COLLABORATE
             </span>
             <h3 className="font-heading text-2xl sm:text-3xl lg:text-[28px] leading-tight uppercase tracking-tight text-white drop-shadow-xs">
-              LET&apos;S BUILD SOMETHING AMAZING TOGETHER.
+              {t.cta.headline}
             </h3>
             <p className="font-mono text-xs sm:text-[13px] text-white/90 leading-relaxed max-w-sm">
               Whether you have an AI research challenge, full-stack application, or exciting internship opportunity.
@@ -117,7 +121,7 @@ export const ExperienceAndCta: React.FC = () => {
               variant="yellow"
               size="lg"
             >
-              <span>GET IN TOUCH</span>
+              <span>{t.cta.button}</span>
               <ArrowUpRight className="w-4 h-4 ml-1" />
             </Button>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import { siteContent, Project, Certification } from "@/data/content";
 import { Chip } from "@/components/ui/Chip";
 import { Button } from "@/components/ui/Button";
@@ -19,10 +20,308 @@ import {
   Pause,
   Eye,
   Download,
+  Volume2,
+  VolumeX,
+  Images,
+  Film,
+  Presentation,
 } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ProjectVisual — 16:7 media area shown inside the carousel slide
+───────────────────────────────────────────────────────────────────────── */
+const ProjectVisual: React.FC<{ project: Project }> = ({ project }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+
+  // If the project has a video, show it
+  if (project.videoUrl) {
+    return (
+      <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-ink relative overflow-hidden group">
+        <video
+          ref={videoRef}
+          src={project.videoUrl}
+          autoPlay
+          loop
+          muted={muted}
+          playsInline
+          className="w-full h-full object-cover"
+          aria-label={`${project.title} demo video`}
+        />
+        {/* Logo overlay */}
+        {project.logoUrl && (
+          <div className="absolute top-3 left-3 z-10 w-10 h-10 border-2 border-ink bg-paper overflow-hidden shadow-brut-xs">
+            <Image src={project.logoUrl} alt={`${project.title} logo`} fill className="object-contain p-1" sizes="40px" />
+          </div>
+        )}
+        {/* Mute toggle */}
+        <button
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          className="absolute bottom-3 right-3 z-10 w-8 h-8 bg-paper border-2 border-ink flex items-center justify-center hover:bg-yellow transition-colors shadow-brut-xs"
+          aria-label={muted ? "Unmute video" : "Mute video"}
+        >
+          {muted ? <VolumeX className="w-4 h-4 text-ink" /> : <Volume2 className="w-4 h-4 text-ink" />}
+        </button>
+        {/* LIVE badge */}
+        <span className="absolute top-3 right-3 z-10 px-2 py-0.5 bg-pink border border-ink font-mono text-[10px] font-bold text-ink uppercase tracking-wider animate-pulse">
+          ▶ DEMO
+        </span>
+      </div>
+    );
+  }
+
+  // If no video but has hero image
+  if (project.heroImage) {
+    return (
+      <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-ink relative overflow-hidden">
+        <Image src={project.heroImage} alt={`${project.title} screenshot`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 66vw" />
+        {project.logoUrl && (
+          <div className="absolute top-3 left-3 z-10 w-10 h-10 border-2 border-ink bg-paper overflow-hidden shadow-brut-xs">
+            <Image src={project.logoUrl} alt={`${project.title} logo`} fill className="object-contain p-1" sizes="40px" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Placeholder fallback for projects without assets
+  return (
+    <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-cream relative overflow-hidden flex flex-col items-center justify-center p-6 text-center select-none">
+      <div className="absolute inset-0 bg-grid-pattern opacity-60" />
+      <SparkleDoodle className="absolute top-3 right-4 w-6 h-6" fillColor="#FFD21F" />
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="w-14 h-14 rounded-full bg-yellow border-brut-2 border-ink shadow-brut-xs flex items-center justify-center font-heading text-xl text-ink mb-2">
+          {project.imagePlaceholderInitial}
+        </div>
+        <h4 className="font-heading text-lg sm:text-xl uppercase tracking-wider text-ink px-4 line-clamp-1">
+          {project.title}
+        </h4>
+        <p className="font-mono text-xs text-ink/80 mt-1 font-bold">{project.tagline}</p>
+      </div>
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ProjectDetailModal — rich modal with Overview / Video / Gallery / Slides tabs
+───────────────────────────────────────────────────────────────────────── */
+const ProjectDetailModal: React.FC<{ project: Project; onClose: () => void }> = ({ project, onClose }) => {
+  const { t } = useLang();
+  type Tab = "overview" | "video" | "gallery" | "presentation";
+  const tabs: Tab[] = [
+    "overview",
+    ...(project.videoUrl ? ["video" as Tab] : []),
+    ...(project.gallery?.length ? ["gallery" as Tab] : []),
+    ...(project.presentationUrl ? ["presentation" as Tab] : []),
+  ];
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [galleryIdx, setGalleryIdx] = useState(0);
+  const gallery = project.gallery ?? [];
+
+  const tabLabel: Record<Tab, string> = {
+    overview: t.projects.overview,
+    video: t.projects.video,
+    gallery: t.projects.gallery,
+    presentation: t.projects.presentation,
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-ink/75 backdrop-blur-xs animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl bg-paper border-brut-3 border-ink shadow-brut relative max-h-[95vh] flex flex-col overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 p-5 border-b-3 border-ink shrink-0">
+          <div className="flex items-center gap-3">
+            {project.logoUrl && (
+              <div className="w-10 h-10 border-2 border-ink bg-cream relative overflow-hidden shrink-0">
+                <Image src={project.logoUrl} alt={`${project.title} logo`} fill className="object-contain p-1" sizes="40px" />
+              </div>
+            )}
+            <div>
+              <span className="font-mono text-xs font-bold text-violet uppercase tracking-wider">Project Deep Dive</span>
+              <h3 className="font-heading text-xl uppercase tracking-wider text-ink mt-0.5 leading-tight">{project.title}</h3>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close dialog"
+            className="w-9 h-9 flex items-center justify-center border-brut-2 border-ink bg-yellow hover:bg-lime transition-colors shrink-0"
+          >
+            <X className="w-5 h-5 text-ink" />
+          </button>
+        </div>
+
+        {/* Tab Bar */}
+        {tabs.length > 1 && (
+          <div className="flex border-b-3 border-ink shrink-0">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2.5 font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors border-r-2 border-ink last:border-r-0 ${
+                  activeTab === tab ? "bg-violet text-white" : "bg-cream text-ink hover:bg-yellow"
+                }`}
+              >
+                {tab === "overview" && <Code2 className="w-3.5 h-3.5" />}
+                {tab === "video" && <Film className="w-3.5 h-3.5" />}
+                {tab === "gallery" && <Images className="w-3.5 h-3.5" />}
+                {tab === "presentation" && <Presentation className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{tabLabel[tab]}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* ── Overview ── */}
+          {activeTab === "overview" && (
+            <div className="p-5 space-y-4">
+              <p className="font-mono text-sm text-ink leading-relaxed">{project.longDescription}</p>
+              <div>
+                <h4 className="font-heading text-xs uppercase tracking-wider text-ink/80 mb-2">{t.projects.technologiesUsed}</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {project.tags.map((tag) => <Chip key={tag} label={tag} variant="lime" />)}
+                </div>
+              </div>
+              <div className="p-3 bg-cream border-brut-2 border-ink font-mono text-xs text-ink/80 space-y-1">
+                <div><span className="font-bold">{t.projects.liveLink}: </span>{project.liveUrl?.startsWith("TODO") ? "—" : project.liveUrl}</div>
+                <div><span className="font-bold">{t.projects.repoLink}: </span>{project.repoUrl?.startsWith("TODO") ? "—" : project.repoUrl}</div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Video ── */}
+          {activeTab === "video" && project.videoUrl && (
+            <div className="p-5">
+              <div className="border-brut-2 border-ink bg-ink overflow-hidden">
+                <video
+                  src={project.videoUrl}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  className="w-full"
+                  aria-label={`${project.title} demo video`}
+                />
+              </div>
+              <p className="font-mono text-xs text-ink/60 mt-2">↑ Project demo video — use controls to pause / seek</p>
+            </div>
+          )}
+
+          {/* ── Gallery ── */}
+          {activeTab === "gallery" && gallery.length > 0 && (
+            <div className="p-5 space-y-3">
+              <div className="border-brut-2 border-ink bg-ink relative overflow-hidden aspect-video">
+                <Image
+                  key={galleryIdx}
+                  src={gallery[galleryIdx]}
+                  alt={`${project.title} screenshot ${galleryIdx + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 672px"
+                />
+                <button
+                  type="button"
+                  onClick={() => setGalleryIdx((i) => (i === 0 ? gallery.length - 1 : i - 1))}
+                  aria-label="Previous screenshot"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-paper border-2 border-ink flex items-center justify-center hover:bg-yellow transition-colors shadow-brut-xs"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGalleryIdx((i) => (i === gallery.length - 1 ? 0 : i + 1))}
+                  aria-label="Next screenshot"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-paper border-2 border-ink flex items-center justify-center hover:bg-yellow transition-colors shadow-brut-xs"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-paper border border-ink font-mono text-[10px] font-bold text-ink">
+                  {galleryIdx + 1} / {gallery.length}
+                </span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {gallery.map((img, i) => (
+                  <button
+                    key={img}
+                    type="button"
+                    onClick={() => setGalleryIdx(i)}
+                    className={`shrink-0 w-16 h-10 relative border-2 transition-all overflow-hidden ${
+                      i === galleryIdx ? "border-violet shadow-brut-xs scale-105" : "border-ink hover:border-violet"
+                    }`}
+                  >
+                    <Image src={img} alt={`Thumb ${i + 1}`} fill className="object-cover" sizes="64px" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Presentation / Slides ── */}
+          {activeTab === "presentation" && project.presentationUrl && (
+            <div className="p-5 flex flex-col gap-3">
+              <div className="border-brut-2 border-ink bg-white overflow-hidden">
+                <iframe
+                  src={`${project.presentationUrl}#toolbar=1&navpanes=0`}
+                  title={`${project.title} presentation`}
+                  className="w-full h-[55vh] sm:h-[62vh] border-0"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={project.presentationUrl}
+                  download
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cream hover:bg-yellow border-2 border-ink font-mono text-xs font-bold text-ink transition-colors shadow-brut-xs"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {t.certifications.download}
+                </a>
+                <a
+                  href={project.presentationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cream hover:bg-lime border-2 border-ink font-mono text-xs font-bold text-ink transition-colors shadow-brut-xs"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  {t.certifications.openTab}
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t-2 border-ink/20 flex justify-between items-center gap-3 shrink-0 bg-cream">
+          <div className="flex gap-2">
+            {project.liveUrl && !project.liveUrl.startsWith("TODO") && (
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-lime border-brut-2 border-ink font-mono text-xs font-bold text-ink hover:bg-yellow transition-colors shadow-brut-xs">
+                {t.projects.liveDemo} <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+          <Button variant="primary" size="sm" onClick={onClose}>{t.projects.close}</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const ProjectsAndCertifications: React.FC = () => {
   const { projects, certifications } = siteContent;
+  const { t } = useLang();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
   const [showAllProjectsModal, setShowAllProjectsModal] = useState(false);
@@ -127,10 +426,10 @@ export const ProjectsAndCertifications: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <span className="font-heading text-xl sm:text-2xl uppercase tracking-wider text-ink block">
-                FEATURED PROJECTS
+                {t.projects.sectionLabel}
               </span>
               <span className="font-mono text-xs text-ink/70">
-                Project {currentIndex + 1} of {projects.length}
+                {t.projects.projectOf.replace("{n}", String(currentIndex + 1)).replace("{total}", String(projects.length))}
               </span>
             </div>
 
@@ -140,7 +439,7 @@ export const ProjectsAndCertifications: React.FC = () => {
                 onClick={() => setShowAllProjectsModal(true)}
                 className="px-3.5 py-2 bg-paper text-ink font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider border-brut-2 border-ink shadow-brut-xs hover:bg-yellow transition-all select-none"
               >
-                VIEW ALL PROJECTS →
+                {t.projects.viewAll}
               </button>
 
               {/* Autoplay Play/Pause Toggle */}
@@ -165,12 +464,12 @@ export const ProjectsAndCertifications: React.FC = () => {
                 {isAutoPlay ? (
                   <>
                     <Pause className="w-3.5 h-3.5 text-ink shrink-0" />
-                    <span>{isHovered ? "PAUSED" : "AUTO: ON"}</span>
+                    <span>{isHovered ? t.projects.paused : t.projects.autoOn}</span>
                   </>
                 ) : (
                   <>
                     <Play className="w-3.5 h-3.5 text-ink shrink-0" />
-                    <span>AUTO: OFF</span>
+                    <span>{t.projects.autoOff}</span>
                   </>
                 )}
               </button>
@@ -211,27 +510,8 @@ export const ProjectsAndCertifications: React.FC = () => {
                   }`}
               />
             </div>
-            {/* Project Image / Visual Display Area (16:7 aspect ratio) */}
-            <div className="w-full aspect-[16/7] min-h-[190px] border-brut-2 border-ink bg-cream relative overflow-hidden flex flex-col items-center justify-center p-6 text-center select-none">
-              {/* Graphic Neo-Brutalist Visual Mockup */}
-              <div className="absolute inset-0 bg-grid-pattern opacity-60"></div>
-              <SparkleDoodle
-                className="absolute top-3 right-4 w-6 h-6"
-                fillColor="#FFD21F"
-              />
-
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-14 h-14 rounded-full bg-yellow border-brut-2 border-ink shadow-brut-xs flex items-center justify-center font-heading text-xl text-ink mb-2">
-                  {currentProject.imagePlaceholderInitial}
-                </div>
-                <h4 className="font-heading text-lg sm:text-xl uppercase tracking-wider text-ink px-4 line-clamp-1">
-                  {currentProject.title}
-                </h4>
-                <p className="font-mono text-xs text-ink/80 mt-1 font-bold">
-                  {currentProject.tagline}
-                </p>
-              </div>
-            </div>
+            {/* Project Visual Area (16:7) — real media when available */}
+            <ProjectVisual project={currentProject} />
 
             {/* White Body Details Card below screenshot */}
             <div className="mt-4 bg-paper border-brut-2 border-ink p-5 flex flex-col justify-between">
@@ -414,74 +694,10 @@ export const ProjectsAndCertifications: React.FC = () => {
 
       {/* Single Project Detail Modal */}
       {activeModalProject && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/70 backdrop-blur-xs animate-fadeIn"
-          onClick={() => setActiveModalProject(null)}
-        >
-          <div
-            className="w-full max-w-lg bg-paper border-brut-3 border-ink shadow-brut p-6 relative max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-4 pb-3 border-b-3 border-ink">
-              <div>
-                <span className="font-mono text-xs font-bold text-violet uppercase tracking-wider">
-                  Project Deep Dive
-                </span>
-                <h3 className="font-heading text-xl uppercase tracking-wider text-ink mt-0.5">
-                  {activeModalProject.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveModalProject(null)}
-                aria-label="Close dialog"
-                className="w-8 h-8 flex items-center justify-center border-brut-2 border-ink bg-yellow hover:bg-lime transition-colors"
-              >
-                <X className="w-5 h-5 text-ink" />
-              </button>
-            </div>
-
-            <div className="py-4 space-y-4">
-              <p className="font-mono text-sm text-ink leading-relaxed">
-                {activeModalProject.longDescription}
-              </p>
-
-              <div>
-                <h4 className="font-heading text-xs uppercase tracking-wider text-ink/80 mb-2">
-                  Technologies Used
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {activeModalProject.tags.map((t) => (
-                    <Chip key={t} label={t} variant="lime" />
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-3 bg-cream border-brut-2 border-ink font-mono text-xs text-ink/80 space-y-1">
-                <div>
-                  <span className="font-bold">Live Demo: </span>
-                  {activeModalProject.liveUrl}
-                </div>
-                <div>
-                  <span className="font-bold">Repository: </span>
-                  {activeModalProject.repoUrl}
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t-2 border-ink/20 flex justify-end">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setActiveModalProject(null)}
-              >
-                DONE
-              </Button>
-            </div>
-          </div>
-        </div>
+        <ProjectDetailModal
+          project={activeModalProject}
+          onClose={() => setActiveModalProject(null)}
+        />
       )}
 
       {/* View All Projects Modal */}

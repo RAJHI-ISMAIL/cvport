@@ -5,9 +5,11 @@ import { siteContent } from "@/data/content";
 import { Chip } from "@/components/ui/Chip";
 import { TechIcon } from "@/components/ui/TechIcon";
 import { ChevronDown, ChevronUp, Sparkles, Layers } from "lucide-react";
+import { useLang } from "@/context/LanguageContext";
 
 export const SkillsStrip: React.FC = () => {
   const { featuredSkills, allSkills } = siteContent;
+  const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -16,8 +18,7 @@ export const SkillsStrip: React.FC = () => {
       <div className="flex flex-col lg:flex-row items-stretch">
         {/* Left Section Label (Violet) */}
         <div className="flex items-center justify-between lg:justify-center px-6 py-4 lg:py-0 lg:w-44 bg-violet text-white font-heading text-lg md:text-xl uppercase tracking-wider select-none border-b-3 lg:border-b-0 lg:border-r-3 border-ink shrink-0">
-          <span>SKILLS</span>
-          <span className="font-mono text-xl ml-2">→</span>
+          <span>{t.skills.sectionLabel}</span>
         </div>
 
         {/* Featured Skills Grid / Cells */}
@@ -48,7 +49,7 @@ export const SkillsStrip: React.FC = () => {
           aria-controls="all-skills-panel"
         >
           <Layers className="w-4 h-4" />
-          <span>{expanded ? "HIDE ALL" : "ALL SKILLS"}</span>
+          <span>{expanded ? t.skills.showLess : t.skills.allSkills}</span>
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>

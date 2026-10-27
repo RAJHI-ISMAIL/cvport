@@ -5,6 +5,7 @@ import { siteContent } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 import { Mail, Phone, MapPin, Globe, Check, Copy, Send, QrCode, X } from "lucide-react";
 import { SparkleDoodle } from "@/components/ui/Doodles";
+import { useLang } from "@/context/LanguageContext";
 
 const WechatIcon = () => (
   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -14,6 +15,7 @@ const WechatIcon = () => (
 
 export const Contact: React.FC = () => {
   const { personal } = siteContent;
+  const { t } = useLang();
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showWechatQr, setShowWechatQr] = useState(false);
 
@@ -68,7 +70,7 @@ export const Contact: React.FC = () => {
             </span>
 
             <h2 className="font-heading text-3xl sm:text-4xl uppercase tracking-tight text-ink">
-              GET IN TOUCH
+              {t.contact.sectionLabel}
             </h2>
 
             <p className="font-mono text-xs sm:text-sm text-ink/85 mt-3 leading-relaxed">
@@ -254,41 +256,31 @@ export const Contact: React.FC = () => {
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label
-                    htmlFor="contact-name"
-                    className="block font-mono text-xs font-bold uppercase text-ink mb-1.5"
-                  >
-                    YOUR NAME *
+                  <label htmlFor="contact-name" className="block font-mono text-xs font-bold uppercase text-ink mb-1.5">
+                    {t.contact.namePlaceholder} *
                   </label>
                   <input
                     id="contact-name"
                     type="text"
                     required
-                    placeholder="e.g. Alex Smith"
+                    placeholder={t.contact.namePlaceholder}
                     value={formState.name}
-                    onChange={(e) =>
-                      setFormState({ ...formState, name: e.target.value })
-                    }
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                     className="w-full px-4 py-3 bg-paper border-brut-2 border-ink shadow-brut-xs font-mono text-xs text-ink focus:outline-none focus:bg-yellow/10"
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="contact-email"
-                    className="block font-mono text-xs font-bold uppercase text-ink mb-1.5"
-                  >
-                    YOUR EMAIL *
+                  <label htmlFor="contact-email" className="block font-mono text-xs font-bold uppercase text-ink mb-1.5">
+                    {t.contact.emailPlaceholder} *
                   </label>
                   <input
                     id="contact-email"
                     type="email"
                     required
-                    placeholder="e.g. alex@company.com"
+                    placeholder={t.contact.emailPlaceholder}
                     value={formState.email}
-                    onChange={(e) =>
-                      setFormState({ ...formState, email: e.target.value })
-                    }
+                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                     className="w-full px-4 py-3 bg-paper border-brut-2 border-ink shadow-brut-xs font-mono text-xs text-ink focus:outline-none focus:bg-yellow/10"
                   />
                 </div>
@@ -315,21 +307,16 @@ export const Contact: React.FC = () => {
               </div>
 
               <div>
-                <label
-                  htmlFor="contact-message"
-                  className="block font-mono text-xs font-bold uppercase text-ink mb-1.5"
-                >
-                  MESSAGE *
+                <label htmlFor="contact-message" className="block font-mono text-xs font-bold uppercase text-ink mb-1.5">
+                  {t.contact.messagePlaceholder} *
                 </label>
                 <textarea
                   id="contact-message"
                   required
                   rows={4}
-                  placeholder="Write your note or project inquiry here..."
+                  placeholder={t.contact.messagePlaceholder}
                   value={formState.message}
-                  onChange={(e) =>
-                    setFormState({ ...formState, message: e.target.value })
-                  }
+                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                   className="w-full px-4 py-3 bg-paper border-brut-2 border-ink shadow-brut-xs font-mono text-xs text-ink focus:outline-none focus:bg-yellow/10 resize-none"
                 />
               </div>
