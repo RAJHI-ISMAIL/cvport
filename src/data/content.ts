@@ -309,6 +309,7 @@ export const siteContent: SiteContent = {
       accentColor: "yellow",
       imagePlaceholderInitial: "ML",
       logoUrl: "/projects/olympic-ml/logo.png",
+      videoUrl: "/projects/olympic-ml/about.mp4",
     },
     {
       id: "weather-flutter",
