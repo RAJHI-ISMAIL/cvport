@@ -291,7 +291,6 @@ export const siteContent: SiteContent = {
       accentColor: "lime",
       imagePlaceholderInitial: "EC",
       logoUrl: "/projects/ecommerce-ai/logo.png",
-      videoUrl: "/projects/ecommerce-ai/demo.mp4",
       presentationUrl: "/projects/ecommerce-ai/presentation.pdf",
     },
     {
