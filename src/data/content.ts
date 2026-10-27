@@ -353,6 +353,7 @@ export const siteContent: SiteContent = {
       repoUrl: "TODO: https://github.com/your-username/cvport-v1",
       accentColor: "violet",
       imagePlaceholderInitial: "V1",
+      videoUrl: "/projects/3d portfilio/about1.mp4",
     },
   ],
   certifications: [
